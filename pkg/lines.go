@@ -1,4 +1,4 @@
-package internal
+package pkg
 
 import (
 	"bufio"
@@ -7,18 +7,22 @@ import (
 )
 
 type LinesCount struct {
-	totalLines   int
-	perFileLines []lines
+	TotalLines   int
+	PerFileLines []Lines
 }
 
-type lines struct {
-	filename string
-	count    int
+type Lines struct {
+	Filename string
+	Count    int
 }
 
 func (l *LinesCount) GetLinesCount(files ...string) error {
-	if len(ValidateFiles(files...)) > 0 {
-		return fmt.Errorf("failed to vailidate files")
+	errs := ValidateFiles(files...)
+	if len(errs) > 0 {
+		for _, e := range errs {
+			fmt.Println(e)
+		}
+		return fmt.Errorf("failed to vailidate files: %#v", errs)
 	}
 
 	for _, f := range files {
@@ -32,12 +36,12 @@ func (l *LinesCount) GetLinesCount(files ...string) error {
 		scanner := bufio.NewScanner(file)
 		var perFileLines int
 		for scanner.Scan() {
-			l.totalLines += 1
+			l.TotalLines += 1
 			perFileLines += 1
 		}
-		l.perFileLines = append(l.perFileLines, lines{
-			filename: stat.Name(),
-			count:    perFileLines,
+		l.PerFileLines = append(l.PerFileLines, Lines{
+			Filename: stat.Name(),
+			Count:    perFileLines,
 		})
 	}
 

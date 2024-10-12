@@ -1,4 +1,4 @@
-package internal
+package pkg
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ func ValidateFiles(files ...string) []error {
 	for _, f := range files {
 		_, err := os.Stat(f)
 		if err != nil {
-			file_err := fmt.Errorf("failed to read file: %s", f)
+			file_err := fmt.Errorf("failed to read file: %s, %v", f, err)
 			errors = append(errors, file_err)
 		}
 	}
