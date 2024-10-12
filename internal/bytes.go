@@ -16,7 +16,7 @@ type Prefixes struct {
 	megaBytesLong  string
 }
 
-type DisplayBytes struct {
+type Bytes struct {
 	prefixes  Prefixes
 	bytes     float32
 	kilobytes float32
@@ -24,7 +24,7 @@ type DisplayBytes struct {
 	gigabytes float32
 }
 
-func (d *DisplayBytes) calculateBytesAndPrefixes() error {
+func (d *Bytes) calculateBytesAndPrefixes() error {
 	bytes := float64(d.bytes)
 	if bytes == 0 {
 		return fmt.Errorf("no bytes provided")
@@ -49,7 +49,7 @@ func (d *DisplayBytes) calculateBytesAndPrefixes() error {
 	return nil
 }
 
-func GetFilesSize(totalMemory *DisplayBytes, memoryPerFile map[string]DisplayBytes, files ...string) error {
+func GetFilesSize(totalMemory *Bytes, memoryPerFile map[string]Bytes, files ...string) error {
 
 	if len(ValidateFiles(files...)) > 0 {
 		return fmt.Errorf("failed to validate files")
@@ -59,7 +59,7 @@ func GetFilesSize(totalMemory *DisplayBytes, memoryPerFile map[string]DisplayByt
 		stat, _ := os.Stat(f)
 		bytes := stat.Size()
 		totalMemory.bytes += float32(bytes)
-		perFile := DisplayBytes{bytes: float32(bytes)}
+		perFile := Bytes{bytes: float32(bytes)}
 		err := perFile.calculateBytesAndPrefixes()
 		if err != nil {
 			return fmt.Errorf("failed to calculate bytes: %q", err)

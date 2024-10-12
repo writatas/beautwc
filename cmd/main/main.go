@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/beautwc/internal"
+	//"github.com/beautwc/internal"
+	"fmt"
 )
 
 func main() {
-	internal.Hello()
+	fmt.Println("hello")
 }
