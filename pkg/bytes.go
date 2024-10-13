@@ -5,67 +5,105 @@ import (
 	"os"
 )
 
+type TotalMemory struct {
+	TotalBytes    Bytes
+	MemoryPerFile []Bytes
+}
+
 type Prefixes struct {
-	bytesShort     string
-	kilobytesShort string
-	megaBytesShort string
-	gigabytesShort string
-	bytesLong      string
-	kilobytesLong  string
-	gigabytesLong  string
-	megaBytesLong  string
+	BytesShort     string
+	KilobytesShort string
+	MegaBytesShort string
+	GigabytesShort string
+	BytesLong      string
+	KilobytesLong  string
+	GigabytesLong  string
+	MegaBytesLong  string
 }
 
 type Bytes struct {
-	prefixes  Prefixes
-	bytes     float32
-	kilobytes float32
-	megabytes float32
-	gigabytes float32
+	Prefixes  Prefixes
+	Bytes     float32
+	Kilobytes float32
+	Megabytes float32
+	Gigabytes float32
 }
 
-func (d *Bytes) calculateBytesAndPrefixes() error {
-	bytes := float64(d.bytes)
+type DisplayBytes struct {
+	Bytes     string
+	Kilobytes string
+	Megabytes string
+	Gigabytes string
+}
+
+func (d *Bytes) CalculateBytesAndPrefixes() error {
+	bytes := float64(d.Bytes)
 	if bytes == 0 {
 		return fmt.Errorf("no bytes provided")
 	}
 
-	d.kilobytes = float32(bytes / 1024)
-	d.megabytes = float32(bytes / (1024 * 1024))
-	d.gigabytes = float32(bytes / (1024 * 1024 * 1024))
+	d.Kilobytes = float32(bytes / 1024)
+	d.Megabytes = float32(bytes / (1024 * 1024))
+	d.Gigabytes = float32(bytes / (1024 * 1024 * 1024))
 
 	prefixes := Prefixes{
-		bytesShort:     "B: ",
-		kilobytesShort: "KB: ",
-		megaBytesShort: "MB: ",
-		gigabytesShort: "GB: ",
-		bytesLong:      "Bytes: ",
-		kilobytesLong:  "kilobytes: ",
-		megaBytesLong:  "Megabytes: ",
-		gigabytesLong:  "Gigabytes: ",
+		BytesShort:     "B: ",
+		KilobytesShort: "KB: ",
+		MegaBytesShort: "MB: ",
+		GigabytesShort: "GB: ",
+		BytesLong:      "Bytes: ",
+		KilobytesLong:  "kilobytes: ",
+		MegaBytesLong:  "Megabytes: ",
+		GigabytesLong:  "Gigabytes: ",
 	}
-	d.prefixes = prefixes
+	d.Prefixes = prefixes
 
 	return nil
 }
 
-func GetFilesSize(totalMemory *Bytes, memoryPerFile map[string]Bytes, files ...string) error {
+func (d *Bytes) DisplayText(long bool) (DisplayBytes, error) {
+	if d.Bytes == float32(0) {
+		return DisplayBytes{}, fmt.Errorf("there are no bytes to display: %f", d.Bytes)
+	}
+	displayText := DisplayBytes{}
+	switch long {
+	case true:
+		displayText.Bytes = fmt.Sprintf("%s%d", d.Prefixes.BytesLong, int(d.Bytes))
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesLong, d.Kilobytes)
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesLong, d.Megabytes)
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesLong, d.Gigabytes)
+	default:
+		displayText.Bytes = fmt.Sprintf("%s%d", d.Prefixes.BytesShort, int(d.Bytes))
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesShort, d.Kilobytes)
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesShort, d.Megabytes)
+		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesShort, d.Gigabytes)
+	}
 
+	return displayText, nil
+}
+
+func GetFilesSize(files ...string) (TotalMemory, error) {
+	totalMemory := TotalMemory{}
+	totalMemory.TotalBytes = Bytes{}
 	if len(ValidateFiles(files...)) > 0 {
-		return fmt.Errorf("failed to validate files")
+		return totalMemory, fmt.Errorf("failed to validate files")
 	}
 
 	for _, f := range files {
 		stat, _ := os.Stat(f)
 		bytes := stat.Size()
-		totalMemory.bytes += float32(bytes)
-		perFile := Bytes{bytes: float32(bytes)}
-		err := perFile.calculateBytesAndPrefixes()
+		totalMemory.TotalBytes.Bytes += float32(bytes)
+		perFileMemory := Bytes{Bytes: float32(bytes)}
+		err := perFileMemory.CalculateBytesAndPrefixes()
 		if err != nil {
-			return fmt.Errorf("failed to calculate bytes: %q", err)
+			return totalMemory, fmt.Errorf("failed to calculate bytes: %q", err)
 		}
-		memoryPerFile[stat.Name()] = perFile
+		totalMemory.MemoryPerFile = append(totalMemory.MemoryPerFile, perFileMemory)
+	}
+	err := totalMemory.TotalBytes.CalculateBytesAndPrefixes()
+	if err != nil {
+		return totalMemory, fmt.Errorf("failed to calculate bytes: %q", err)
 	}
 
-	return nil
+	return totalMemory, nil
 }
