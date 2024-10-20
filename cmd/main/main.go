@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/beautwc/pkg"
-	thirdparty "github.com/beautwc/third_party"
+	"github.com/beautwc/tools"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	prefix, value := thirdparty.GetValueColors()
+	prefix, value := tools.GetValueColors()
 	fmt.Println("total lines: ", linesCount.TotalLines)
 	for _, lines := range linesCount.PerFileLines {
 		p, v := prefix.Sprint(lines.Filename), value.Sprint(lines.Count)
