@@ -6,13 +6,13 @@ import (
 )
 
 type CharactersCount struct {
-	totalMatches   int
-	perFileMatches []characters
+	TotalMatches   int
+	PerFileMatches []Characters
 }
 
-type characters struct {
-	filename string
-	count    int
+type Characters struct {
+	Filename string
+	Count    int
 }
 
 func (c *CharactersCount) GetCharactersCount(files ...string) error {
@@ -22,9 +22,10 @@ func (c *CharactersCount) GetCharactersCount(files ...string) error {
 	for _, f := range files {
 		data, _ := os.ReadFile(f)
 		stat, _ := os.Stat(f)
-		c.totalMatches += len(string(data))
-		c.perFileMatches = append(c.perFileMatches, characters{
-			filename: stat.Name(),
+		c.TotalMatches += len(string(data))
+		c.PerFileMatches = append(c.PerFileMatches, Characters{
+			Filename: stat.Name(),
+			Count:    len(string(data)),
 		})
 	}
 

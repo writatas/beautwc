@@ -8,13 +8,13 @@ import (
 )
 
 type WordsCount struct {
-	totalWords   int
-	wordsPerFile []words
+	TotalWords   int
+	WordsPerFile []Words
 }
 
-type words struct {
-	filename string
-	count    int
+type Words struct {
+	Filename string
+	Count    int
 }
 
 func (w *WordsCount) GetWordsCount(files ...string) error {
@@ -35,12 +35,12 @@ func (w *WordsCount) GetWordsCount(files ...string) error {
 		for scanner.Scan() {
 			line := scanner.Text()
 			words := strings.Fields(line)
-			w.totalWords += len(words)
+			w.TotalWords += len(words)
 			wordsPerFile += len(words)
 		}
-		w.wordsPerFile = append(w.wordsPerFile, words{
-			filename: stat.Name(),
-			count:    wordsPerFile,
+		w.WordsPerFile = append(w.WordsPerFile, Words{
+			Filename: stat.Name(),
+			Count:    wordsPerFile,
 		})
 	}
 
