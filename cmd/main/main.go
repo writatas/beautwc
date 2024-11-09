@@ -2,21 +2,19 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/beautwc/pkg"
-	"github.com/beautwc/tools"
+	cli "github.com/beautwc/pkg/beautwc-cli"
 )
 
 func main() {
-	linesCount := pkg.LinesCount{}
-	err := linesCount.GetLinesCount("../../examples/text1.txt", "../../examples/text2.txt", "../../examples/text3.txt")
+	bCli := cli.BeautwcCli{Name: "beautwc"}
+	bytesCommands, err := cli.BytesCommands()
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("failed to retrieve bytes commands: %w", err)
 	}
-	prefix, value := tools.GetValueColors()
-	fmt.Println("total lines: ", linesCount.TotalLines)
-	for _, lines := range linesCount.PerFileLines {
-		p, v := prefix.Sprint(lines.Filename), value.Sprint(lines.Count)
-		fmt.Printf("%s : %s\n", p, v)
+
+	bCli.New(bytesCommands)
+	err = bCli.Run()
+	if err != nil {
+		fmt.Println("error occured: %w", err)
 	}
 }

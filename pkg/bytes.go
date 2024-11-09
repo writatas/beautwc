@@ -22,6 +22,7 @@ type Prefixes struct {
 }
 
 type Bytes struct {
+	Files     []string
 	Prefixes  Prefixes
 	Bytes     float32
 	Kilobytes float32
@@ -69,14 +70,14 @@ func (d *Bytes) DisplayText(long bool) (DisplayBytes, error) {
 	switch long {
 	case true:
 		displayText.Bytes = fmt.Sprintf("%s%d", d.Prefixes.BytesLong, int(d.Bytes))
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesLong, d.Kilobytes)
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesLong, d.Megabytes)
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesLong, d.Gigabytes)
+		displayText.Kilobytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesLong, d.Kilobytes)
+		displayText.Megabytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesLong, d.Megabytes)
+		displayText.Gigabytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesLong, d.Gigabytes)
 	default:
 		displayText.Bytes = fmt.Sprintf("%s%d", d.Prefixes.BytesShort, int(d.Bytes))
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesShort, d.Kilobytes)
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesShort, d.Megabytes)
-		displayText.Bytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesShort, d.Gigabytes)
+		displayText.Kilobytes = fmt.Sprintf("%s%.4f", d.Prefixes.KilobytesShort, d.Kilobytes)
+		displayText.Megabytes = fmt.Sprintf("%s%.4f", d.Prefixes.MegaBytesShort, d.Megabytes)
+		displayText.Gigabytes = fmt.Sprintf("%s%.4f", d.Prefixes.GigabytesShort, d.Gigabytes)
 	}
 
 	return displayText, nil
@@ -93,7 +94,8 @@ func GetFilesSize(files ...string) (TotalMemory, error) {
 		stat, _ := os.Stat(f)
 		bytes := stat.Size()
 		totalMemory.TotalBytes.Bytes += float32(bytes)
-		perFileMemory := Bytes{Bytes: float32(bytes)}
+		totalMemory.TotalBytes.Files = append(totalMemory.TotalBytes.Files, fmt.Sprintf("%s B:%.2f, ", f, float32(bytes)))
+		perFileMemory := Bytes{Bytes: float32(bytes), Files: []string{fmt.Sprintf("%s B:%.2f, ", f, float32(bytes))}}
 		err := perFileMemory.CalculateBytesAndPrefixes()
 		if err != nil {
 			return totalMemory, fmt.Errorf("failed to calculate bytes: %q", err)
