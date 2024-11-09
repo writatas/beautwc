@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/beautwc/pkg"
+	"github.com/beautwc/tools"
 	"github.com/urfave/cli/v2"
 )
 
@@ -44,15 +45,17 @@ func BytesCommands() ([]cli.Command, error) {
 					}
 					fmt.Printf(
 						`
-            Total Bytes for Files:
+            %s:
             %s
-            --------------
+            %s
             %s
             %s
             %s
             %s
             `,
-						memory.TotalBytes.Files,
+						tools.ColorRGB("              Total Bytes for File(s)", 51, 204, 255),
+						tools.ColorRGB("----------------------------------------------------", 51, 204, 255),
+						tools.ColorRGB(fmt.Sprintf("%v", memory.TotalBytes.Files), 102, 153, 153),
 						display.Bytes,
 						display.Kilobytes,
 						display.Megabytes,

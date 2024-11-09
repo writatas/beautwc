@@ -3,6 +3,8 @@ package pkg
 import (
 	"fmt"
 	"os"
+
+	"github.com/beautwc/tools"
 )
 
 type TotalMemory struct {
@@ -48,14 +50,14 @@ func (d *Bytes) CalculateBytesAndPrefixes() error {
 	d.Gigabytes = float32(bytes / (1024 * 1024 * 1024))
 
 	prefixes := Prefixes{
-		BytesShort:     "B: ",
-		KilobytesShort: "KB: ",
-		MegaBytesShort: "MB: ",
-		GigabytesShort: "GB: ",
-		BytesLong:      "Bytes: ",
-		KilobytesLong:  "kilobytes: ",
-		MegaBytesLong:  "Megabytes: ",
-		GigabytesLong:  "Gigabytes: ",
+		BytesShort:     tools.ColorRGB("B: ", 0, 250, 0),
+		KilobytesShort: tools.ColorRGB("KB: ", 0, 250, 0),
+		MegaBytesShort: tools.ColorRGB("MB: ", 0, 250, 0),
+		GigabytesShort: tools.ColorRGB("GB: ", 0, 250, 0),
+		BytesLong:      tools.ColorRGB("Bytes: ", 0, 250, 0),
+		KilobytesLong:  tools.ColorRGB("Kilobytes: ", 0, 250, 0),
+		MegaBytesLong:  tools.ColorRGB("Megabytes: ", 0, 250, 0),
+		GigabytesLong:  tools.ColorRGB("Gigabytes: ", 0, 250, 0),
 	}
 	d.Prefixes = prefixes
 
@@ -95,7 +97,7 @@ func GetFilesSize(files ...string) (TotalMemory, error) {
 		bytes := stat.Size()
 		totalMemory.TotalBytes.Bytes += float32(bytes)
 		totalMemory.TotalBytes.Files = append(totalMemory.TotalBytes.Files, fmt.Sprintf("%s B:%.2f, ", f, float32(bytes)))
-		perFileMemory := Bytes{Bytes: float32(bytes), Files: []string{fmt.Sprintf("%s B:%.2f, ", f, float32(bytes))}}
+		perFileMemory := Bytes{Bytes: float32(bytes), Files: []string{fmt.Sprintf("%sB:%.2f ", f, float32(bytes))}}
 		err := perFileMemory.CalculateBytesAndPrefixes()
 		if err != nil {
 			return totalMemory, fmt.Errorf("failed to calculate bytes: %q", err)
