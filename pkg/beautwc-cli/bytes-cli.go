@@ -44,16 +44,8 @@ func BytesCommands() ([]cli.Command, error) {
 						return fmt.Errorf("failed to display text: %w", err)
 					}
 					fmt.Printf(
-						`
-            %s:
-            %s
-            %s
-            %s
-            %s
-            %s
-            %s
-            `,
-						tools.ColorRGB("              Total Bytes for File(s)", 51, 204, 255),
+						"%s:\n%s\n%s\n%s\n%s\n%s\n%s\n",
+						tools.ColorRGB("Total Bytes for File(s)", 51, 204, 255),
 						tools.ColorRGB("----------------------------------------------------", 51, 204, 255),
 						tools.ColorRGB(fmt.Sprintf("%v", memory.TotalBytes.Files), 102, 153, 153),
 						display.Bytes,

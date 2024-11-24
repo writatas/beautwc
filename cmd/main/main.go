@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	cli "github.com/beautwc/pkg/beautwc-cli"
 )
 
@@ -11,8 +12,14 @@ func main() {
 	if err != nil {
 		fmt.Println("failed to retrieve bytes commands: %w", err)
 	}
+	charactersCommands, err := cli.CharactersCommands()
+	if err != nil {
+		fmt.Println("faled to retrieve character commands", err)
+	}
 
-	bCli.New(bytesCommands)
+	allCommands := append(bytesCommands, charactersCommands...)
+
+	bCli.New(allCommands)
 	err = bCli.Run()
 	if err != nil {
 		fmt.Println("error occured: %w", err)
