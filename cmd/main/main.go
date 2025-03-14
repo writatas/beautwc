@@ -25,11 +25,19 @@ func main() {
 		fmt.Println("failed to retrieve word commands", err)
 	}
 
+	defaultCommands, err := cli.DefaultCommand()
+	if err != nil {
+		fmt.Println("failed to retrieve default command", err)
+	}
+
 	allCommands := append(bytesCommands, charactersCommands...)
 	allCommands = append(allCommands, linesCommands...)
 	allCommands = append(allCommands, wordsCommands...)
+	allCommands = append(allCommands, defaultCommands...)
 
 	bCli.New(allCommands)
+	bCli.App.DefaultCommand = "default"
+	bCli.App.Action = defaultCommands[0].Action
 	err = bCli.Run()
 	if err != nil {
 		fmt.Println("error occured: %w", err)

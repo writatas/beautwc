@@ -47,3 +47,12 @@ func (l *LinesCount) GetLinesCount(files ...string) error {
 
 	return nil
 }
+
+func (l *LinesCount) PrintDefault() {
+	if l.TotalLines == 0 {
+		fmt.Printf("no line count found")
+	}
+	for _, f := range l.PerFileLines {
+		fmt.Printf("%v: %s - %d\n", "lines", f.Filename, f.Count)
+	}
+}

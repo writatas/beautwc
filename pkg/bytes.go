@@ -111,3 +111,11 @@ func GetFilesSize(files ...string) (TotalMemory, error) {
 
 	return totalMemory, nil
 }
+
+func (d *Bytes) PrintDefault() {
+	t, err := d.DisplayText(true)
+	if err != nil {
+		fmt.Printf("displayText failed to get value %v", err)
+	}
+	fmt.Printf("%s\n%s\n%s\n%s\n", t.Bytes, t.Kilobytes, t.Megabytes, t.Gigabytes)
+}

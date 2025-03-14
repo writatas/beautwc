@@ -31,3 +31,12 @@ func (c *CharactersCount) GetCharactersCount(files ...string) error {
 
 	return nil
 }
+
+func (c *CharactersCount) PrintDefault() {
+	if c.TotalMatches == 0 {
+		fmt.Printf("no character count matches count found")
+	}
+	for _, f := range c.PerFileMatches {
+		fmt.Printf("%v: %s - %d\n", "characters", f.Filename, f.Count)
+	}
+}

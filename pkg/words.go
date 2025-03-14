@@ -46,3 +46,12 @@ func (w *WordsCount) GetWordsCount(files ...string) error {
 
 	return nil
 }
+
+func (w *WordsCount) PrintDefault() {
+	if w.TotalWords == 0 {
+		fmt.Printf("no word count found")
+	}
+	for _, f := range w.WordsPerFile {
+		fmt.Printf("%v: %s - %d\n", "words", f.Filename, f.Count)
+	}
+}

@@ -1,17 +1,18 @@
 package pkg
 
-import (
-	"fmt"
-
-	"github.com/beautwc/tools"
-)
-
-func WordsLinesCharacters(files ...string) error {
+func PrintAll(files ...string) error {
 	wordsCount := WordsCount{}
 	linesCount := LinesCount{}
 	charactersCount := CharactersCount{}
-
-	err := wordsCount.GetWordsCount(files...)
+	memoryBytes, err := GetFilesSize(files...)
+	if err != nil {
+		return err
+	}
+	err = memoryBytes.TotalBytes.CalculateBytesAndPrefixes()
+	if err != nil {
+		return err
+	}
+	err = wordsCount.GetWordsCount(files...)
 	if err != nil {
 		return err
 	}
@@ -23,13 +24,18 @@ func WordsLinesCharacters(files ...string) error {
 	if err != nil {
 		return err
 	}
-
+	PrintDefaultValue(&memoryBytes.TotalBytes)
+	PrintDefaultValue(&wordsCount)
+	PrintDefaultValue(&linesCount)
+	PrintDefaultValue(&charactersCount)
 	return nil
 }
 
-func printOutValue(name string, files []any) error {
-	for _, f := range files {
-		fmt.Printf("%s: %d\n", tools.ColorRGB(f.FileName, 51, 204, 255), f.Count)
-	}
-	return nil
+// interface to always print default string values if no flags are provided
+type Default interface {
+	PrintDefault()
+}
+
+func PrintDefaultValue(t Default) {
+	t.PrintDefault()
 }
